@@ -168,7 +168,6 @@ button{font:inherit;cursor:pointer}
   <div class="status"><div class="turn" id="turnTxt"></div></div>
   <div class="timer" id="timerBar"><i id="timerFill"></i></div>
   <div class="meta"><span id="timerTxt"></span><span id="pairsTxt"></span></div>
-  <div class="picker"><label for="pickNum">Ficha n.º</label><input id="pickNum" type="number" inputmode="numeric" min="1" autocomplete="off"><button class="btn" id="pickBtn">Voltear</button><span id="pickMsg"></span></div>
   <div class="board" id="board"></div>
 </div>
 
@@ -461,7 +460,7 @@ function start(){
   Sound.init(); Sound.play("ui");
   Sound.setMusic($("optMusic").checked); Sound.setSfx($("optSfx").checked);
   $("winOv").classList.add("hidden"); $("pauseOv").classList.add("hidden");
-  show("game"); newGame(); $("pickMsg").textContent=""; $("pickNum").value=""; setTimeout(()=>$("pickNum").focus(),100);
+  show("game"); newGame();
 }
 function setPause(p){
   if(!G||G.ended) return; G.paused=p; $("pauseOv").classList.toggle("hidden",!p);
@@ -472,18 +471,6 @@ function toMenu(){
   renderSetup(); show("setup");
 }
 
-/* Voltear una ficha escribiendo su número (para partidas transmitidas, sin tocar la pantalla) */
-function pick(){
-  const inp = $("pickNum"), msg = $("pickMsg"), n = parseInt(inp.value,10);
-  msg.textContent = "";
-  if(!G || G.ended) return;
-  if(!n || n<1 || n>G.cards.length){ msg.textContent = "Escribe un número del 1 al "+G.cards.length; inp.select(); return; }
-  if(G.cards[n-1].matched || G.open.includes(n-1)){ msg.textContent = "La ficha "+n+" ya está volteada"; inp.select(); return; }
-  if(G.locked || G.paused) return;
-  flip(n-1, tile(n-1)); inp.value = ""; inp.focus();
-}
-$("pickBtn").onclick = pick;
-$("pickNum").addEventListener("keydown", e=>{ if(e.key==="Enter") pick(); });
 $("startBtn").onclick = start;
 $("againBtn").onclick = start;
 $("menuBtn").onclick = toMenu;
